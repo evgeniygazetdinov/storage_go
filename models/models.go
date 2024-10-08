@@ -26,8 +26,15 @@ type CustomUser struct {
 	Email     int    `json:"email"`
 	IsStuff   string `json:"is_stuff"`
 }
+type Result struct {
+	ID   int
+	Name string
+	Age  int
+}
 
-func GetUser() []CustomUser {
+var result Result
+
+func GetUser() Result {
 	dsn := "user:pass@tcp(127.0.0.1:3306)/dbname?charset=utf8mb4&parseTime=True&loc=Local"
 	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 
@@ -36,28 +43,10 @@ func GetUser() []CustomUser {
 		// simply print the error to the console
 		fmt.Println("Err", err.Error())
 		// returns nil on error
-		return nil
+		fmt.Println("err")
 	}
+	// defer db.Close()
+	db.Raw("SELECT * FROM product").Scan(&result)
 
-	defer db.Close()
-	results, err := db.Exec("SELECT * FROM product")
-
-	if err != nil {
-		fmt.Println("Err", err.Error())
-		return nil
-	}
-
-	users := []CustomUser{}
-	for results.Next() {
-		var user CustomUser
-		// for each row, scan into the Product struct
-		err = results.Scan(&user.FirstName, &user.LastName, &user.Email, &user.IsStuff)
-		if err != nil {
-			panic(err.Error()) // proper error handling instead of panic in your app
-		}
-		// append the product into products array
-		users = append(users, user)
-	}
-
-	return users
+	return result
 }
