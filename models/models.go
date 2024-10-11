@@ -1,10 +1,10 @@
 package models
 
 import (
+	"database/sql"
 	"fmt"
 
-	"gorm.io/driver/mysql"
-	"gorm.io/gorm"
+	_ "github.com/go-sql-driver/mysql"
 )
 
 type album struct {
@@ -26,27 +26,44 @@ type CustomUser struct {
 	Email     int    `json:"email"`
 	IsStuff   string `json:"is_stuff"`
 }
-type Result struct {
+type BaseUser struct {
 	ID   int
 	Name string
 	Age  int
 }
 
-var result Result
+func GetUser(id int) []BaseUser {
 
-func GetUser() Result {
-	dsn := "user:pass@tcp(127.0.0.1:3306)/dbname?charset=utf8mb4&parseTime=True&loc=Local"
-	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
+	db, err := sql.Open("mysql", "example"+":"+"secret2"+"@tcp(127.0.0.1:3306)/"+"stage")
 
 	// if there is an error opening the connection, handle it
 	if err != nil {
 		// simply print the error to the console
 		fmt.Println("Err", err.Error())
 		// returns nil on error
-		fmt.Println("err")
+		return nil
 	}
-	// defer db.Close()
-	db.Raw("SELECT * FROM product").Scan(&result)
 
-	return result
+	defer db.Close()
+	SimpleUser, err := db.Query("SELECT * FROM users where id=?", id)
+
+	if err != nil {
+		fmt.Println("Err", err.Error())
+		return nil
+	}
+
+	products := []BaseUser{}
+	for SimpleUser.Next() {
+		var prod BaseUser
+		// for each row, scan into the Product struct
+		err = SimpleUser.Scan(&prod.ID, &prod.Name, &prod.Age)
+		if err != nil {
+			panic(err.Error()) // proper error handling instead of panic in your app
+		}
+		// append the product into products array
+		products = append(products, prod)
+	}
+
+	return products
+
 }
