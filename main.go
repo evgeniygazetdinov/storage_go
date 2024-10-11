@@ -1,13 +1,13 @@
 package main
 
 import (
+	"example/storage-go/models"
+	"fmt"
 	"net/http"
-	"os"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
-
-var path, err = os.Getwd()
 
 func getAlbums(c *gin.Context) {
 	// c.IndentedJSON(http.StatusOK, models.Albums)
@@ -16,16 +16,12 @@ func getAlbums(c *gin.Context) {
 	})
 }
 
-func getAlbums2(c *gin.Context) {
+func checkDay(c *gin.Context) {
+	data := c.Request.URL.Query().Get("id")
+	user_id, _ := strconv.Atoi(data)
 
-	c.HTML(http.StatusOK, "main.tmpl", gin.H{
-		"title": "Posts",
-	})
-	// c.IndentedJSON(http.StatusOK, models.GetUser())
-
-}
-func getAlbums3(c *gin.Context) {
-
+	user := models.GetUser(user_id)
+	fmt.Println(user)
 	c.IndentedJSON(http.StatusOK, "{'HELL': 'YEAH'}")
 
 }
@@ -34,7 +30,6 @@ func main() {
 	router := gin.Default()
 	router.LoadHTMLGlob("temp/*")
 	router.GET("/albums", getAlbums)
-	router.GET("/albums2", getAlbums2)
-	router.GET("/forCheck", getAlbums3)
+	router.GET("/forCheck", checkDay)
 	router.Run("localhost:8085")
 }
