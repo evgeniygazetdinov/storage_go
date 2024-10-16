@@ -9,7 +9,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func getAlbums(c *gin.Context) {
+func getDays(c *gin.Context) {
 	// c.IndentedJSON(http.StatusOK, models.Albums)
 	c.HTML(http.StatusOK, "index.html", gin.H{
 		"title": "Posts",
@@ -29,7 +29,7 @@ func checkDay(c *gin.Context) {
 func main() {
 	router := gin.Default()
 	router.LoadHTMLGlob("temp/*")
-	router.GET("/albums", getAlbums)
+	router.GET("/", getDays)
 	router.GET("/forCheck", checkDay)
 	router.Run("localhost:8085")
 }

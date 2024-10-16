@@ -5,6 +5,11 @@
     <title>test</title>
     
 </head>
+<style>
+  .pointer-link {
+      cursor: pointer;
+  }
+</style>
 <body>
   <div>
     <table id="calendar">
@@ -24,7 +29,7 @@
     function tdclick(event){
       var xmlHttp = new XMLHttpRequest();
       id = event.target.id
-    xmlHttp.open( "GET", '/forCheck?id='+id, false ); // false for synchronous request
+    xmlHttp.open( "GET", '/forCheck?id='+id , false); // false for synchronous request
     xmlHttp.send( null );
     console.log(xmlHttp.responseText);
     // event.stopPropagation()
@@ -34,7 +39,7 @@ for (var i = 1; i <= 5; i++) {
 //open tr tag
 htmlstring += "<tr>";
 for (var i = 1; i <= 30; i++) {
-  var days = "<td id='"+i+"'onclick='tdclick(event);'>" + i + "</td>";
+  var days = "<td id='"+i+"'onclick='tdclick(event)'><a class='pointer-link'>" + i + "</a></td>";
   //print 1 to 31 with td tag
   htmlstring += days;
   //if i divide by 7 and remainder is 0
@@ -47,6 +52,7 @@ htmlstring += "</tr>";
 };
 //console.log(htmlstring);
 table.insertAdjacentHTML('beforeend', htmlstring)
+
   </script> 
 </body>
 </html>
