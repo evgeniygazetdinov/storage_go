@@ -6,6 +6,8 @@ import (
 	"net/http"
 	"strconv"
 
+	helpers "example/storage-go/helpers"
+
 	"github.com/gin-gonic/gin"
 )
 
@@ -26,10 +28,17 @@ func checkDay(c *gin.Context) {
 
 }
 
+func addEvent(c *gin.Context) {
+	myEventId := helpers.ConvertQueryDataToValues(c, "id")
+	fmt.Println(myEventId)
+	c.IndentedJSON(http.StatusOK, "{'HELL':"+string(myEventId)+"}")
+}
+
 func main() {
 	router := gin.Default()
 	router.LoadHTMLGlob("temp/*")
 	router.GET("/", getDays)
 	router.GET("/forCheck", checkDay)
+	router.POST("/addEvent", addEvent)
 	router.Run("localhost:8085")
 }
